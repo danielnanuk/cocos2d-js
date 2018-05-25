@@ -3,34 +3,61 @@ let Ball = cc.Sprite.extend({
   maxYAcceleration: 0,
   xAcceleration: 0,
   yAcceleration: 0,
+  minX: 0,
+  maxX: 0,
+  minY: 0,
+  maxY: 0,
+  created: 0,
+  pR: 0,
+  pG: 0,
+  pB: 0,
   ctor(data) {
     this._super()
-    this.initWithFile(res.HelloWorld_png)
+    this.initWithFile(res.bullet_png)
     let {maxXAcceleration = 10, maxYAcceleration = 10, scale = 0.5} = data
-    this.setAnchorPoint(0, 0)
-    let size = cc.winSize
     this.maxXAcceleration = maxXAcceleration
     this.maxYAcceleration = maxYAcceleration
+    this.scale = scale
+    let paddingX = this.width * this.scale / 2
+    let paddingY = this.height * this.scale / 2
+    this.minX = paddingX
+    this.minY = paddingY
+    let size = cc.winSize
+    this.maxX = size.width - paddingX
+    this.maxY = size.height - paddingY
     this.xAcceleration = Math.random() * maxXAcceleration
     this.yAcceleration = Math.random() * maxYAcceleration
-    this.scale = scale
-    this.x = Math.random() * (size.width - this.width * scale)
-    this.y = Math.random() * (size.height - this.height * scale)
-    console.log(this.x, this.y)
+    this._randomLocation()
+    this.created = new Date().getTime()
     this.scheduleUpdate()
   },
+  _randomLocation() {
+    this.x = this._random(this.minX, this.maxX)
+    this.y = this._random(this.minY, this.maxY)
+  },
+  _random(from, to) {
+    return Math.random() * to + from
+  },
   update(delay) {
+    this.changeLocation()
+  },
+  changeLocation() {
     let nextX = this.x + this.xAcceleration
     let nextY = this.y + this.yAcceleration
-    if (nextX < 0 || nextX >= cc.winSize.width - this.width) {
-      this.xAcceleration = -this.xAcceleration
-      nextX = Math.sign(nextX) < 0 ? Math.abs(nextX) : 2 * (cc.winSize.width - this.width) - nextX
 
+    if (nextX < this.minX) {
+      this.xAcceleration = -this.xAcceleration
+      nextX = 2 * this.minX - nextX
+    } else if (nextX > this.maxX) {
+      this.xAcceleration = -this.xAcceleration
+      nextX = 2 * this.maxX - nextX
     }
-    if (nextY < 0 || nextY > cc.winSize.height - this.width) {
+    if (nextY < this.minY) {
       this.yAcceleration = -this.yAcceleration
-      nextY =
-        Math.sign(nextY) < 0 ? Math.abs(nextY) : 2 * (cc.winSize.height - this.height) - nextY
+      nextY = 2 * this.minY - nextY
+    } else if (nextY > this.maxY) {
+      this.yAcceleration = -this.yAcceleration
+      nextY = 2 * this.maxY - nextY
     }
     this.x = nextX
     this.y = nextY

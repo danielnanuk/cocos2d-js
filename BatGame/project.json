@@ -2,7 +2,7 @@
   "project_type": "javascript",
   "debugMode": 1,
   "showFPS": true,
-  "frameRate": 60,
+  "frameRate": 120,
   "noCache": false,
   "id": "gameCanvas",
   "renderMode": 0,
@@ -13,6 +13,8 @@
   "jsList": [
     "src/resource.js",
     "src/app.js",
-    "src/Ball.js"
+    "src/Ball.js",
+    "src/nodes/Hero.js",
+    "src/nodes/Bullet.js"
   ]
 }
